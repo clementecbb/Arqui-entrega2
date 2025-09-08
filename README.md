@@ -1,1 +1,1 @@
-# arqui_proyecto_2
+# Arquitectura de Computadores: Proyecto 2
