@@ -1,5 +1,5 @@
 # Archivos del proyecto
-VERILOG_FILES = computer.v # EJERCICIO: Rellenar los archivos verilog
+VERILOG_FILES = computer.v alu.v register.v pc.v mux2.v instruction_memory.v data_memory.v mux2_a.v control_unit.v  # EJERCICIO: Rellenar los archivos verilog
 TESTBENCH_FILE = testbench.v
 YOSYS_SCRIPT = yosys.tcl
 

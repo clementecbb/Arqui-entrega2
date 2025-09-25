@@ -1,3 +1,4 @@
+//yosys.tcl
 #EJERCICIO: Rellenar los archivos verilog
 yosys read_verilog computer.v
 

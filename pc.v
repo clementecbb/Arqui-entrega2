@@ -1,3 +1,4 @@
+//pc.v
 module pc(clk, pc);
    input clk;
    output [3: 0] pc;

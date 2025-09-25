@@ -1,3 +1,4 @@
+// instruction_memory.v
 module instruction_memory(address, out);
    input [3:0] address;
    output [8:0] out;
