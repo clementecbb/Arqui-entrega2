@@ -2,13 +2,29 @@
 
 Este proyecto utiliza un `Makefile` para automatizar la simulación y síntesis del diseño en Verilog.
 
-### Archivos del Proyecto
+## Detalles de la Implementación de la Entrega 1
+
+### Resultado de MUXs segun selector
+
+#### Para MUX A:
+- si sel=00: out = regA.
+- si sel=01: out = regB.
+- si sel=10: out = numero 1 en 8 bits.
+- si sel=11: out = numero 0 en 8 bits.
+  
+#### Para MUX B:
+- si sel=00: out = regB.
+- si sel=01: out = unico out de Data Memory (por ahora 0 pq no lo piden en la primera entrega jejej).
+- si sel=10: out = k8 (el literal; es decir, los 8 LSBs salientes de Instruction Memory).
+- si sel=11: out = numero 0 en 8 bits.
+
+## Archivos del Proyecto
 
 * `computer.v`, `testbench.v`, etc.: Los archivos fuente en Verilog para el diseño y su banco de pruebas.
 * `yosys.tcl`: El script para la síntesis lógica.
 * `Makefile`: El script principal para ejecutar todos los comandos.
 
-### Cómo Ejecutar
+## Cómo Ejecutar
 
 Utiliza los siguientes comandos en tu terminal:
 
