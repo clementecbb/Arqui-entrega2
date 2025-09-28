@@ -27,6 +27,7 @@ module control_unit(
       2'b00: s3 = 3'b000; // ADD
       2'b01: s3 = 3'b001; // SUB
       2'b10: s3 = 3'b010; // AND
+
       2'b11: begin
         // Especiales sólo si c=1 (inmediato) y dependiendo de imm
         if (c == 1'b1) begin
@@ -41,8 +42,9 @@ module control_unit(
           s3 = 3'b011; // OR si no es inmediato
         end
       end
+
       default: s3 = 3'b000;
-    endcase
+    endcase // S
   end
 
   assign alu_s = s3;

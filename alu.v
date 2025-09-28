@@ -4,7 +4,9 @@ module alu(a, b, s, out);
   input  [2:0] s;
   output [7:0] out;
 
-  reg [7:0] out;
+  wire [7:0]   a, b;
+  wire [2:0]   s;
+  reg  [7:0]   out;
 
   always @* begin
     out = 8'b0;

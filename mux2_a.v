@@ -1,6 +1,6 @@
 // mux2_a.v
 module mux2_a(e0, e1, c, out);
-  input  [7:0] e0, e1;
+  input  [7:0] e0, e1; // A y B, respectivamente
   input        c;
   output [7:0] out;
 

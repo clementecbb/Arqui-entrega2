@@ -6,4 +6,4 @@ yosys synth
 yosys write_verilog out/netlist.v
 
 yosys stat
-yosys tee -q -o "out/croc.rpt" stat
+yosys tee -q -o "out/computer.rpt" stat
