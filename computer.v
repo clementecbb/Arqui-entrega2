@@ -2,28 +2,38 @@
 module computer(clk, alu_out_bus);
   input clk;
   output [7:0] alu_out_bus;
-  // Recominedo pasar todas estas señales para afuera para poder ser vistas en el waveform
-
-  wire [3:0]   pc_out_bus;
-  wire [8:0]   im_out_bus;
-  wire [7:0]   regA_out_bus;
-  wire [7:0]   regB_out_bus;
-  wire [7:0]   muxA_out_bus; // conexion de mux2_a.v
-  wire [7:0]   muxB_out_bus;
-
-  // zero-extend del literal de 4 bits a 8
-  wire [7:0]   imm8 = {4'b0000, im_out_bus[3:0]};
   
-  // señales de control
-  wire         LA_sig, LB_sig, cB_sig, SA_sig;
-  wire [2:0]   alu_s_sig;
+  // Recominedo pasar todas estas señales para afuera para poder ser vistas en el waveform
+  wire [3:0]    pc_out_bus;
+  wire [7:0]    dm_out_bus = 8'b00000000;  // por ahora 0, ya que Data Memory no se necesita para la primera entrega
+  wire [14:0]   im_out_bus;
+  
+  wire [7:0]    regA_out_bus;
+  wire [7:0]    regB_out_bus;
+  wire [7:0]    muxA_out_bus;
+  wire [7:0]    muxB_out_bus;
+  
+  // señales de control output-eadas por el control unit
+  wire          LA_sig, LB_sig; // loads de 1 bit c/u, evidentemente
+  wire [1:0]    SB_sig, SA_sig;
+  wire [2:0]    alu_s_sig;
 
+  // cables adicionales de numeros 0 y 1 para MUXs de A y B
+  wire [7:0]    const0 = 8'b00000000;
+  wire [7:0]    const1 = 8'b00000001;
+
+  // slice de out bus de Instruction Memory para separar opcode y literal
+  wire [6:0]    opcode = im_out_bus[14:8]; // 7 MSBs del instruction memory
+  wire [7:0]    k8     = im_out_bus[7:0];  // literal; 8 LSBs del instruction memory
+
+
+  /*======= CABLEADO DE MODULOS =======*/
   control_unit CU(
-    .im(im_out_bus),
+    .opcode(opcode),
     .LA(LA_sig),
     .LB(LB_sig),
-    .cB(cB_sig),
     .SA(SA_sig),
+    .SB(SB_sig),
     .alu_s(alu_s_sig)
   );
 
@@ -38,39 +48,42 @@ module computer(clk, alu_out_bus);
   );
 
   register regA(
-    .clk(clk),
-    .data(alu_out_bus),
-    .load(LA_sig), // antes .load(im_out_bus[6])
+    .clk(clk), 
+    .data(alu_out_bus), 
+    .load(LA_sig), 
     .out(regA_out_bus)
   );
-
+  
   register regB(
-    .clk(clk),
-    .data(alu_out_bus),
-    .load(LB_sig), // antes .load(im_out_bus[7])
+    .clk(clk), 
+    .data(alu_out_bus), 
+    .load(LB_sig), 
     .out(regB_out_bus)
   );
 
-  // Mux A (e0=A, e1=B, c=SA)
-  mux2_a muxA(
+  mux4 muxA(
     .e0(regA_out_bus), 
-    .e1(regB_out_bus), 
-    .c(SA_sig), // antes .c(SA)
+    .e1(regB_out_bus),
+    .e2(const1),
+    .e3(const0),
+    .sel(SA_sig),
     .out(muxA_out_bus)
   );
 
-  mux2 muxB(
+  mux4 muxB(
     .e0(regB_out_bus), 
-    .e1(imm8),  // antes e1(im_out_bus[3:0]) 
-    .c(cB_sig), // antes .c(im_out_bus[8])
+    .e1(dm_out_bus),
+    .e2(k8),
+    .e3(const0),
+    .sel(SB_sig),
     .out(muxB_out_bus)
   );
 
-  // ALU ahora toma 'a' desde muxA_out_bus:
   alu ALU(
-    .a(muxA_out_bus), // antes .a(regA_out_bus)
+    .a(muxA_out_bus),
     .b(muxB_out_bus),
-    .s(alu_s_sig),    // antes .s(im_out_bus[5:4])
+    .s(alu_s_sig),
     .out(alu_out_bus)
   );
+
 endmodule
