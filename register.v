@@ -10,11 +10,11 @@ module register(clk, data, load, out);
 
   initial begin
     out = 8'b0;
-  end
+  end // initial
 
   always @(posedge clk) begin
     if (load) begin
       out <= data;
     end
-  end
+  end // always @(posedge clk)
 endmodule
