@@ -2,24 +2,17 @@ module test;
     reg           clk = 0;
     wire [7:0]    regA_out;
     wire [7:0]    regB_out;
+    wire [7:0]    alu_out_bus;
     
     reg           mov_test_failed = 1'b0;
     reg           add_test_failed = 1'b0;
     reg           shl_test_failed = 1'b0;
 
-    // ------------------------------------------------------------
-    // IMPORTANTE!! Editar con el modulo de su computador
-    // ------------------------------------------------------------
-    computer Comp(.clk(clk));
-    // ------------------------------------------------------------
+    // inicializacion del computador
+    computer Comp(.clk(clk), .alu_out_bus(alu_out_bus));
 
-    // ------------------------------------------------------------
-    // IMPORTANTE!! Editar para que la variable apunte a la salida
-    // de los registros de su computador.
-    // ------------------------------------------------------------
     assign regA_out = Comp.regA.out;
     assign regB_out = Comp.regB.out;
-    // ------------------------------------------------------------
 
     initial begin
         $dumpfile("out/dump.vcd");
@@ -102,7 +95,7 @@ module test;
             $display(">>>>> SHL TEST FAILED! <<<<< ");
         end
 
-        #2;
+        #2
         $finish;
     end
 
