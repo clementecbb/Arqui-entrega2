@@ -4,7 +4,7 @@ module computer(clk, alu_out_bus);
   output [7:0] alu_out_bus;
   
   // Recominedo pasar todas estas señales para afuera para poder ser vistas en el waveform
-  wire [3:0]    pc_out_bus;
+  wire [7:0]    pc_out_bus;
   wire [7:0]    dm_out_bus = 8'b00000000;  // por ahora 0, ya que Data Memory no se necesita para la primera entrega
   wire [14:0]   im_out_bus;
   

@@ -1,9 +1,9 @@
 // instruction_memory.v
 module instruction_memory(address, out);
-  input  [3:0]  address;
+  input  [7:0]  address;
   output [14:0] out;
 
-  wire [3:0]    address;
+  wire [7:0]    address;
   wire [14:0]   out;
 
   reg  [14:0]   mem [0:15];
