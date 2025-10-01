@@ -30,10 +30,10 @@ module control_unit(
         // se usa OR para seleccionar el valor que se quiere mover.
         
         // ya que solo B puede ser el literal k8,
-        // entonces A siempre debe ser 0 (sel=11 en el MUX de A)
+        // entonces A siempre sera 0 (sel=11 en el MUX de A) cuando se quiere mover un literal
         
-        // entonces, si se hace 0 OR k8, el resultado es k8
-        // y si se hace 0 OR B, el resultado es B, etc.
+          // entonces, si se hace 0 OR k8, el resultado es k8
+          // y si se hace 0 OR B, el resultado es B, etc.
 
       7'b0000000: begin // MOV A,B (A=B)
         la_r = 1;
@@ -44,8 +44,8 @@ module control_unit(
 
       7'b0000001: begin // MOV B,A (B=A)
         lb_r = 1;
-        sa_r = 2'b11;   // 0
-        sb_r = 2'b00;   // A
+        sa_r = 2'b00;   // A
+        sb_r = 2'b11;   // 0
         s_r  = 3'b011;  // OR (pasa A)
       end
 
@@ -300,8 +300,8 @@ module control_unit(
       /* ========== INC ========== */
       7'b0100100: begin // INC B
         lb_r = 1;
-        sa_r = 2'b01;   // B
-        sb_r = 2'b10;   // k8 (donde k=const1)
+        sa_r = 2'b10;   // 1
+        sb_r = 2'b00;   // B
         s_r  = 3'b000;  // ADD
       end
 
