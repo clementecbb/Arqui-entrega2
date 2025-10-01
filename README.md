@@ -2,9 +2,9 @@
 
 Este proyecto utiliza un `Makefile` para automatizar la simulación y síntesis del diseño en Verilog.
 
-## Detalles de la Implementación de la Entrega 1
+## Detalles de la Implementación de la Entrega 1 (intermedia)
 
-### Resultado de MUXs segun selector
+### Output de MUXs segun selector
 
 #### Para MUX A:
 - si sel=00: out = regA.
