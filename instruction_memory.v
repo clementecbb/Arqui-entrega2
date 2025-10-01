@@ -6,7 +6,7 @@ module instruction_memory(address, out);
   wire [7:0]    address;
   wire [14:0]   out;
 
-  reg  [14:0]   mem [0:15];
+  reg  [14:0]   mem [0:255];
 
   assign out = mem[address];
 endmodule
