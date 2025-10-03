@@ -17,6 +17,8 @@ module data_memory(clk, data_in, address, w, data_out);
   
   // escritura es sincrona!!!
   always @(posedge clk) begin
-    if (w) mem[address] <= data_in;
+    if (w) begin 
+      mem[address] <= data_in;
+    end
   end
 endmodule

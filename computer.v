@@ -49,6 +49,8 @@ module computer(clk, alu_result_out_bus);
 
   pc PC(
     .clk(clk),
+    .k8(k8),
+    .load(L_PC_sig),
     .pc(pc_out_bus)
   );
 

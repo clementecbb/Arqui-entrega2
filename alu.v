@@ -13,7 +13,7 @@ module alu(a, b, s, result_out, flags_out);
   // n = 1 si MSB de out es 1. Indica si numero es negativo en complemento 2
   // c = 1 si hubo carry (solo en suma y resta)
   // v = 1 si hubo overflow (solo en suma y resta)
-  reg z, n, c, v;
+  reg       z, n, c, v;
   reg [8:0] result_with_carry; // 9 bits para detectar carry/borrow
 
   always @* begin
