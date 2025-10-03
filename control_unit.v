@@ -2,24 +2,34 @@
 module control_unit(
   input  [6:0] opcode,
   input  [3:0] flags_status, // {Z, N, C, V} desde status.v
-  output       LA,
-  output       LB,
+  output       L_PC,         // load de PC
+  output       D_W,          // write enable hacia Data Memory
+  output       SD,           // selector de MUX data
+  output       LA,           // load de regA
+  output       LB,           // load de regB
   output [1:0] SA,           // selector de Mux A
   output [1:0] SB,           // selector de Mux B
-  output [2:0] alu_s         // selector de la ALU (3 bits)
+  output [2:0] S_alu         // selector de la ALU (3 bits)
 );
-  // defaults
+  // para instrucciones basicas, los siguientes tres valores no importan
+  reg       l_pc_r = 0;
+  reg       d_w_r = 0;
+  reg       sd_r = 0;
+
   reg       la_r = 0;
   reg       lb_r = 0;
   reg [1:0] sa_r = 2'b00;  // regA por default
   reg [1:0] sb_r = 2'b00;  // regB por default
-
   reg [2:0] s_r = 3'b000;  // ADD por default
 
   /* ============= OPCODE DECODER =============*/
   always @* begin
     // defaults en cada modificacion de inputs 
     // (recordar que Control Unit es combinacional)
+    l_pc_r = 0;
+    d_w_r = 0;
+    sd_r = 0;
+    
     la_r = 0; 
     lb_r = 0;
     sa_r = 2'b00; 
@@ -317,5 +327,5 @@ module control_unit(
   assign LB    = lb_r; 
   assign SA    = sa_r; 
   assign SB    = sb_r; 
-  assign alu_s = s_r;
+  assign S_alu = s_r;
 endmodule
