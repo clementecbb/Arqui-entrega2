@@ -29,7 +29,7 @@ module control_unit(
     l_pc_r = 0;
     d_w_r = 0;
     sd_r = 0;
-    
+
     la_r = 0; 
     lb_r = 0;
     sa_r = 2'b00; 
@@ -37,6 +37,12 @@ module control_unit(
     s_r  = 3'b000; // ADD por defecto
 
     case (opcode)
+
+    /* ==========================================================
+    =================== INSTRUCCIONES BASICAS ===================
+    ============================================================= 
+    */
+
       /* ========== MOV ========== */
         // se usa OR para seleccionar el valor que se quiere mover.
         
@@ -316,6 +322,83 @@ module control_unit(
         s_r  = 3'b000;  // ADD
       end
 
+
+    /* ===========================================================
+    ============= INSTRUCCIONES CON DIRECCIONAMIENTO =============
+    ==============================================================
+    */
+
+      /* ========== MOV (DIR) ========== */
+      7'b0100101: begin // MOV A,(Dir) (A=Mem[Lit])
+        sd_r = 0;       // Dir=Lit
+        la_r = 1;
+        sa_r = 2'b11;   // 0
+        sb_r = 2'b01;   // Mem[Dir]
+        s_r  = 3'b011;  // OR (pasa Mem[Dir])
+      end
+
+      // ...
+
+      7'b0100111: begin // MOV (Dir),A (Mem[Lit]=A)
+        d_w_r = 1;      // data Write enabled
+        sd_r  = 0;      // Dir=Lit
+        sa_r  = 2'b00;  // A
+        sb_r  = 2'b11;  // 0
+        s_r   = 3'b011; // OR (pasa A)
+      end
+
+      /* ========== ADD (DIR) ========== */
+
+      /* ========== SUB (DIR) ========== */
+
+      /* ========== AND (DIR) ========== */
+
+      /* ========== OR (DIR) ========== */
+
+      /* ========== NOT (DIR) ========== */
+
+      /* ========== XOR (DIR) ========== */
+
+      /* ========== SHL (DIR) ========== */
+
+      /* ========== SHR (DIR) ========== */
+
+      /* ========== INC (DIR) ========== */
+
+      /* ========== RST (DIR) ========== */
+
+
+    /* ===========================================================
+    =================== INSTRUCCIONES DE SALTO ===================
+    ==============================================================
+    */
+
+      /* ========== CMP ========== */
+
+      /* ========== JMP ========== */
+      7'b1010011: begin // JMP (PC=Lit)
+        l_pc_r = 1;     // load PC
+        sa_r = 2'b11;   // 0
+        sb_r = 2'b10;   // k8
+        s_r  = 3'b011;  // OR (pasa k8)
+      end
+
+      /* ========== JEQ ========== */
+
+      /* ========== JNE ========== */
+
+      /* ========== JGT ========== */
+
+      /* ========== JLT ========== */
+
+      /* ========== JGE ========== */
+
+      /* ========== JLE ========== */
+
+      /* ========== JCR ========== */
+
+      /* ========== JOV ========== */
+
       default: begin
         //nada
       end
@@ -323,6 +406,9 @@ module control_unit(
   end // always @*
 
   // asignamiento de outputs a partir de los registros internos
+  assign L_PC  = l_pc_r; 
+  assign D_W   = d_w_r; 
+  assign SD    = sd_r;
   assign LA    = la_r; 
   assign LB    = lb_r; 
   assign SA    = sa_r; 
