@@ -1,11 +1,16 @@
 // computer.v
-module computer(clk, alu_out_bus);
+module computer(clk, alu_result_out_bus);
   input clk;
-  output [7:0] alu_out_bus;
+
+  output [7:0] alu_result_out_bus;
   
-  // Recominedo pasar todas estas señales para afuera para poder ser vistas en el waveform
+  // cables relacionados al modulo de status
+  wire [3:0] alu_flags_out_bus; // flags salientes de ALU
+  wire [3:0] status_out_bus;    // flags salientes de Status
+  
+  // Recomiendo pasar todas estas señales para afuera para poder ser vistas en el waveform
   wire [7:0]    pc_out_bus;
-  wire [7:0]    dm_out_bus = 8'b00000000;  // por ahora 0, ya que Data Memory no se necesita para la primera entrega
+  wire [7:0]    dm_out_bus = 8'b00000000; // por ahora 0, ya que Data Memory no se necesita para la primera entrega
   wire [14:0]   im_out_bus;
   
   wire [7:0]    regA_out_bus;
@@ -30,6 +35,7 @@ module computer(clk, alu_out_bus);
   /*======= CABLEADO DE MODULOS =======*/
   control_unit CU(
     .opcode(opcode),
+    .flags_status(),
     .LA(LA_sig),
     .LB(LB_sig),
     .SA(SA_sig),
@@ -49,14 +55,14 @@ module computer(clk, alu_out_bus);
 
   register regA(
     .clk(clk), 
-    .data(alu_out_bus), 
+    .data(alu_result_out_bus), 
     .load(LA_sig), 
     .out(regA_out_bus)
   );
   
   register regB(
     .clk(clk), 
-    .data(alu_out_bus), 
+    .data(alu_result_out_bus), 
     .load(LB_sig), 
     .out(regB_out_bus)
   );
@@ -83,7 +89,14 @@ module computer(clk, alu_out_bus);
     .a(muxA_out_bus),
     .b(muxB_out_bus),
     .s(alu_s_sig),
-    .out(alu_out_bus)
+    .result_out(alu_result_out_bus),
+    .flags_out(alu_flags_out_bus)
+  );
+
+  status Status(
+    .clk(clk),
+    .flags_in(alu_flags_out_bus),
+    .flags_out(status_out_bus)
   );
 
 endmodule

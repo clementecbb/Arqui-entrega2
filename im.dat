@@ -39,7 +39,7 @@
 000100100000000
 // Instruction 17: SUB A, 7  (A = A - Lit -> A = 15 - 7 = 8)
 000101000000111
-// Instruction 18: SUB B, 10 (B = B - Lit -> B = -10 - 10 = -20)
+// Instruction 18: SUB B, 10 (B = B - Lit -> B = 10 - 10 = 0)
 000101100001010
 
 // --- Test 4: AND (Register and Literal) ---

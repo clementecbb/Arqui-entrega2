@@ -2,7 +2,7 @@ module test;
     reg           clk = 0;
     wire [7:0]    regA_out;
     wire [7:0]    regB_out;
-    wire [7:0]    alu_out_bus;
+    wire [7:0]    alu_result_out_bus;
 
     reg           mov_test_failed = 1'b0;
     reg           reg_mov_test_failed = 1'b0;
@@ -19,7 +19,10 @@ module test;
     // ------------------------------------------------------------
     // IMPORTANTE!! Editar con el modulo de su computador
     // ------------------------------------------------------------
-    computer Comp(.clk(clk), .alu_out_bus(alu_out_bus));
+    computer Comp(
+      .clk(clk), 
+      .alu_result_out_bus(alu_result_out_bus)
+    );
     // ------------------------------------------------------------
 
     // ------------------------------------------------------------

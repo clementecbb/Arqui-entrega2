@@ -1,11 +1,12 @@
 // control_unit.v
 module control_unit(
   input  [6:0] opcode,
+  input  [3:0] flags_status, // {Z, N, C, V} desde status.v
   output       LA,
   output       LB,
-  output [1:0] SA,   // selector de Mux A
-  output [1:0] SB,   // selector de Mux B
-  output [2:0] alu_s // selector de la ALU (3 bits)
+  output [1:0] SA,           // selector de Mux A
+  output [1:0] SB,           // selector de Mux B
+  output [2:0] alu_s         // selector de la ALU (3 bits)
 );
   // defaults
   reg       la_r = 0;
