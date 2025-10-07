@@ -1,15 +1,6 @@
-// --- Test 0: MOV ---
-// Instruction 1: MOV A, 42
-000001000101010
-
-// Instruction ??: MOV (Dir),A  (se mueve A a la direccion 1 de la memoria)
-010011100000001
-
-// Instruction 11: ADD A, 11 (A=53)
-000011000001011
-
-// Instruction ??: MOV A,(Dir)  (se mueve lo que esta almacenado en Dir a A; es decir, A = 42 de nuevo)
-010010100000001
-
-// Instruction ??: JMP (PC=2 para que se haga ADD A, 11 = 53)
-101001100000010
+// A=9; B=4; Mem[10]=5; A=0; A <- Mem[10] (=5)
+000001000001001   // MOV A,9
+000001100000100   // MOV B,4
+011001100001010   // SUB (Dir) @10    (Mem[10]=5)
+000001000000000   // MOV A,0
+010010100001010   // MOV A,(Dir) @10  => A=5

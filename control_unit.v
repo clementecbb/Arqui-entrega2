@@ -328,7 +328,7 @@ module control_unit(
     ==============================================================
     */
 
-      /* ========== MOV (DIR) ========== */
+      /* ========== MOV (DIR)  ========== */
       7'b0100101: begin // MOV A,(Dir) (A=Mem[Lit])
         sd_r = 0;       // Dir=Lit
         la_r = 1;
@@ -337,7 +337,15 @@ module control_unit(
         s_r  = 3'b011;  // OR (pasa Mem[Dir])
       end
 
-      // ...
+      
+      7'b0100110: begin // MOV B,(Dir) (B=Mem[Lit])
+        sd_r = 0;       // Dir=Lit
+        lb_r = 1;
+        sa_r = 2'b11;   // 0
+        sb_r = 2'b01;   // Mem[Dir]
+        s_r  = 3'b011;  // OR (pasa Mem[Dir])
+      end
+
 
       7'b0100111: begin // MOV (Dir),A (Mem[Lit]=A)
         d_w_r = 1;      // data Write enabled
@@ -347,9 +355,104 @@ module control_unit(
         s_r   = 3'b011; // OR (pasa A)
       end
 
+      7'b0101000: begin// MOV (Dir),B
+        d_w_r = 1; 
+        sd_r = 0;       // Dir=Lit
+        sa_r = 2'b11;   // 0
+        sb_r = 2'b00;  // B
+        s_r = 3'b011;  // OR (pasa B)
+      end
+
+      7'b0101001: begin// MOV A,(B)
+        sd_r =1 ;      // Dir=B
+        la_r = 1;
+        sa_r = 2'b11;   // 0
+        sb_r = 2'b01;   // Mem[Dir]
+        s_r  = 3'b011;  // OR (pasa Mem[Dir])
+      end
+
+      7'b0101010: begin// MOV B,(B)
+        sd_r =1 ;      // Dir=B
+        lb_r = 1;
+        sa_r = 2'b11;   // 0
+        sb_r = 2'b01;   // Mem[Dir]
+        s_r  = 3'b011;  // OR (pasa Mem[Dir])
+      end
+
+      7'b0101011: begin// MOV (B),A
+        d_w_r = 1; 
+        sd_r = 1;      // Dir=B
+        sa_r = 2'b00;  // A
+        sb_r = 2'b11;  // 0
+        s_r = 3'b011;  // OR (pasa A)
+      end
+
+
       /* ========== ADD (DIR) ========== */
+      7'b0101100: begin // ADD A,(Dir)
+        sd_r = 0;       // Dir=Lit
+        la_r = 1;
+        sa_r = 2'b00;   // A
+        sb_r = 2'b01;   // Mem[Dir]
+        s_r  = 3'b000;  // ADD
+      end
+      
+      7'b0101101: begin // ADD B,(Dir)
+        sd_r = 0;       // Dir=Lit
+        lb_r = 1;
+        sa_r = 2'b01;   // B
+        sb_r = 2'b01;   // Mem[Dir]
+        s_r  = 3'b000;  // ADD
+      end
+
+      7'b0101110: begin // ADD A,(B)
+        sd_r = 1;       // Dir=B
+        la_r = 1;
+        sa_r = 2'b00;   // A
+        sb_r = 2'b01;   // Mem[Dir]
+        s_r  = 3'b000;  // ADD
+      end
+
+      7'b0101111: begin // ADD(dir) (Mem[Lit]=A+B)
+        d_w_r = 1; 
+        sd_r = 0;       // Dir=Lit
+        sa_r = 2'b00;   // A
+        sb_r = 2'b00;   // B
+        s_r  = 3'b000;  // ADD
+      end
 
       /* ========== SUB (DIR) ========== */
+      7'b0110000: begin // SUB A,(Dir)
+        sd_r = 0;       // Dir=Lit
+        la_r = 1;
+        sa_r = 2'b00;   // A
+        sb_r = 2'b01;   // Mem[Dir]
+        s_r  = 3'b001;  // SUB
+      end
+
+      7'b0110001: begin // SUB B,(Dir)
+        sd_r = 0;       // Dir=Lit
+        lb_r = 1;
+        sa_r = 2'b01;   // B
+        sb_r = 2'b01;   // Mem[Dir]
+        s_r  = 3'b001;  // SUB
+      end
+
+      7'b0110010: begin // SUB A,(B)
+        sd_r = 1;       // Dir=B
+        la_r = 1;
+        sa_r = 2'b00;   // A
+        sb_r = 2'b01;   // Mem[Dir]
+        s_r  = 3'b001;  // SUB
+      end
+
+      7'b0110011: begin // SUB(dir) (Mem[Lit]=A-B)
+        d_w_r = 1; 
+        sd_r = 0;       // Dir=Lit
+        sa_r = 2'b00;   // A
+        sb_r = 2'b00;   // B
+        s_r  = 3'b001;  // SUB
+      end
 
       /* ========== AND (DIR) ========== */
 
