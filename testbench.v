@@ -36,7 +36,7 @@ module test;
       Comp.regA_out_bus, Comp.regB_out_bus, alu_result_out_bus
     );
 
-    wait (Comp.PC.pc == 5);
+    wait (Comp.PC.pc == 9);
     #2; //ns
     $finish;
   end // initial

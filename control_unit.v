@@ -477,6 +477,8 @@ module control_unit(
     */
 
       /* ========== CMP ========== */
+      
+
 
       /* ========== JMP ========== */
       7'b1010011: begin // JMP (PC=Lit)
@@ -487,20 +489,86 @@ module control_unit(
       end
 
       /* ========== JEQ ========== */
+      7'b1010100: begin // JEQ (PC=Lit) si Z=1
+        if (flags_status[3] == 1) begin // Z=1
+          l_pc_r = 1;     // load PC
+          sa_r = 2'b11;   // 0
+          sb_r = 2'b10;   // k8
+          s_r  = 3'b011;  // OR (pasa k8)
+        end
+      end
 
       /* ========== JNE ========== */
+      7'b1010101: begin // JNE (PC=Lit) si Z=0
+        if (flags_status[3] == 0) begin // Z=0
+          l_pc_r = 1;     // load PC
+          sa_r = 2'b11;   // 0
+          sb_r = 2'b10;   // k8
+          s_r  = 3'b011;  // OR (pasa k8)
+        end
+      end
 
       /* ========== JGT ========== */
+      7'b1010110: begin // JGT (PC=Lit) si Z=0 y N=0
+        if ((flags_status[3] == 0) && (flags_status[2] == 0)) begin // Z=0 y N=0
+          l_pc_r = 1;     // load PC
+          sa_r = 2'b11;   // 0
+          sb_r = 2'b10;   // k8
+          s_r  = 3'b011;  // OR (pasa k8)
+        end
+        
+      end
 
       /* ========== JLT ========== */
+      7'b1010111: begin // JLT (PC=Lit) si N=1
+        if (flags_status[2] == 1) begin // N=1
+          l_pc_r = 1;     // load PC
+          sa_r = 2'b11;   // 0
+          sb_r = 2'b10;   // k8
+          s_r  = 3'b011;  // OR (pasa k8)
+        end
+      end
 
       /* ========== JGE ========== */
+      7'b1011000: begin // JGE (PC=Lit) si N=0
+        if (flags_status[2] == 0) begin // N=0
+          l_pc_r = 1;     // load PC
+          sa_r = 2'b11;   // 0
+          sb_r = 2'b10;   // k8
+          s_r  = 3'b011;  // OR (pasa k8)
+        end
+      end
+
 
       /* ========== JLE ========== */
+      7'b1011001: begin // JLE (PC=Lit) si Z=1 o N=1
+        if ((flags_status[3] == 1) || (flags_status[2] == 1)) begin // Z=1 o N=1
+          l_pc_r = 1;     // load PC
+          sa_r = 2'b11;   // 0
+          sb_r = 2'b10;   // k8
+          s_r  = 3'b011;  // OR (pasa k8)
+        end
+      end
 
       /* ========== JCR ========== */
+      7'b1011010: begin // JCR (PC=Lit) si C=1
+        if (flags_status[1] == 1) begin // C=1
+          l_pc_r = 1;     // load PC
+          sa_r = 2'b11;   // 0
+          sb_r = 2'b10;   // k8
+          s_r  = 3'b011;  // OR (pasa k8)
+        end
+      end
 
       /* ========== JOV ========== */
+      7'b1011011: begin // JOV (PC=Lit) si V=1
+        if (flags_status[0] == 1) begin // V=1
+          l_pc_r = 1;     // load PC
+          sa_r = 2'b11;   // 0
+          sb_r = 2'b10;   // k8
+          s_r  = 3'b011;  // OR (pasa k8)
+        end
+      end
 
       default: begin
         //nada
