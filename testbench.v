@@ -1,45 +1,200 @@
-// testbench.v
 module test;
-  reg clk = 0;
-  wire [7:0] alu_result_out_bus;
+    reg           clk = 0;
+    wire [7:0]    regA_out;
+    wire [7:0]    regB_out;
+    wire [7:0] alu_out;
+    wire [14:0] im_out;
 
-  computer Comp(
-    .clk(clk), 
-    .alu_result_out_bus(alu_result_out_bus)
-  );
+    reg mem_sequence_test_failed = 1'b0;
+    reg add_a_dir_test_failed = 1'b0;
+    reg jeq_test_1_failed = 1'b0;
 
-  initial begin
-    $dumpfile("out/dump.vcd");
-    $dumpvars(0, test);
-
-    $readmemb("im.dat", Comp.IM.mem);
-
-    $display("mem[0] = %h", Comp.IM.mem[0]);
-    $display("mem[1] = %h", Comp.IM.mem[1]);
-    $display("mem[2] = %h", Comp.IM.mem[2]);
-    $display("mem[3] = %h", Comp.IM.mem[3]);
-    $display("mem[4] = %h", Comp.IM.mem[4]);
-    $display("mem[5] = %h", Comp.IM.mem[5]);
-    $display("mem[6] = %h", Comp.IM.mem[6]);
-    $display("mem[7] = %h", Comp.IM.mem[7]);
-    $display("mem[8] = %h", Comp.IM.mem[8]);
-    $display("mem[9] = %h", Comp.IM.mem[9]);
-    $display("mem[10] = %h", Comp.IM.mem[10]);
-    $display("mem[11] = %h", Comp.IM.mem[11]);
-    $display("mem[12] = %h", Comp.IM.mem[12]);
-    
-    $display("\npd: esta bien que mem[11] y mem[12] sean xxxx, ya que no hay mas de 10 instrucciones cargadas en im.dat\n");
-
-    $monitor(
-      "At %t | pc=%0d | im=%b | regA=0x%h | regB=0x%h | alu_out=0x%h",
-      $time, Comp.pc_out_bus, Comp.im_out_bus,
-      Comp.regA_out_bus, Comp.regB_out_bus, alu_result_out_bus
+    // ------------------------------------------------------------
+    // IMPORTANTE!! Editar con el modulo de su computador
+    // ------------------------------------------------------------
+    computer Comp(
+      .clk(clk),
+      .alu_result_out_bus(alu_out)                      // Connects to the main clock signal
     );
+    // ------------------------------------------------------------
 
-    wait (Comp.PC.pc == 9);
-    #2; //ns
-    $finish;
-  end // initial
+    // ------------------------------------------------------------
+    // IMPORTANTE!! Editar para que la variable apunte a la salida
+    // de los registros de su computador.
+    // ------------------------------------------------------------
+    assign regA_out = Comp.regA.out;
+    assign regB_out = Comp.regB.out;
+    // ------------------------------------------------------------
 
-  always #1 clk = ~clk;
+    initial begin
+        $dumpfile("out/dump.vcd");
+        $dumpvars(0, test);
+        $readmemb("im_memory.dat", Comp.IM.mem);
+
+        // --- Test: Full & Expanded Memory Sequence ---
+        $display("\n----- STARTING TEST: Full Memory Sequence -----");
+
+        // --- Part 1: Original Test (RegB -> Mem -> RegA) ---
+        $display("\n--- Part 1: Testing RegB -> Memory -> RegA ---");
+
+        // Check Inst 0: MOV B, 99 | Purpose: Verify that register B is loaded with the immediate value 99.
+        #2;
+        $display("CHECK @ t=%0t: After MOV B, 99 -> regB = %d", $time, regB_out);
+        if (regB_out !== 8'd99) begin
+            $error("FAIL [Part 1]: regB expected 99, got %d", regB_out);
+            mem_sequence_test_failed = 1'b1;
+        end
+
+        // Check Inst 1: MOV (50), B | Purpose: Verify that the value from register B (99) is stored in DM[50].
+        #2;
+        $display("CHECK @ t=%0t: After MOV (50), B -> DM[50] = %d", $time, Comp.DM.mem[50]);
+        if (Comp.DM.mem[50] !== 8'd99) begin
+            $error("FAIL [Part 1]: DM[50] expected 99, got %d", Comp.DM.mem[50]);
+            mem_sequence_test_failed = 1'b1;
+        end
+
+        // Check Inst 2: MOV A, (50) | Purpose: Verify that register A is loaded with the value from DM[50] (99).
+        #2;
+        $display("CHECK @ t=%0t: After MOV A, (50) -> regA = %d", $time, regA_out);
+        if (regA_out !== 8'd99) begin
+            $error("FAIL [Part 1]: regA expected 99, got %d", regA_out);
+            mem_sequence_test_failed = 1'b1;
+        end
+
+        // --- Part 2: Symmetric Test (RegA -> Mem -> RegB) ---
+        $display("\n--- Part 2: Testing RegA -> Memory -> RegB ---");
+
+        // Check Inst 3: MOV A, 123 | Purpose: Verify that register A is loaded with the immediate value 123.
+        #2;
+        $display("CHECK @ t=%0t: After MOV A, 123 -> regA = %d", $time, regA_out);
+        if (regA_out !== 8'd123) begin
+            $error("FAIL [Part 2]: regA expected 123, got %d", regA_out);
+            mem_sequence_test_failed = 1'b1;
+        end
+
+        // Check Inst 4: MOV (51), A | Purpose: Verify that the value from register A (123) is stored in DM[51].
+        #2;
+        $display("CHECK @ t=%0t: After MOV (51), A -> DM[51] = %d", $time, Comp.DM.mem[51]);
+        if (Comp.DM.mem[51] !== 8'd123) begin
+            $error("FAIL [Part 2]: DM[51] expected 123, got %d", Comp.DM.mem[51]);
+            mem_sequence_test_failed = 1'b1;
+        end
+
+        // Check Inst 5: MOV B, (51) | Purpose: Verify that register B is loaded with the value from DM[51] (123).
+        #2;
+        $display("CHECK @ t=%0t: After MOV B, (51) -> regB = %d", $time, regB_out);
+        if (regB_out !== 8'd123) begin
+            $error("FAIL [Part 2]: regB expected 123, got %d", regB_out);
+            mem_sequence_test_failed = 1'b1;
+        end
+
+        // --- Part 3: Overwrite and Edge Case Test (0 and 255) ---
+        $display("\n--- Part 3: Testing Overwrite and Edge Cases ---");
+
+        // Check Inst 6: MOV A, 255 | Purpose: Verify that register A is loaded with the immediate value 255.
+        #2;
+        $display("CHECK @ t=%0t: After MOV A, 255 -> regA = %d", $time, regA_out);
+        if (regA_out !== 8'd255) begin
+            $error("FAIL [Part 3]: regA expected 255, got %d", regA_out);
+            mem_sequence_test_failed = 1'b1;
+        end
+
+        // Check Inst 7: MOV (50), A | Purpose: Verify that the value from register A (255) overwrites the content of DM[50].
+        #2;
+        $display("CHECK @ t=%0t: After MOV (50), A [Overwrite] -> DM[50] = %d", $time, Comp.DM.mem[50]);
+        if (Comp.DM.mem[50] !== 8'd255) begin
+            $error("FAIL [Part 3]: DM[50] expected 255 after overwrite, got %d", Comp.DM.mem[50]);
+            mem_sequence_test_failed = 1'b1;
+        end
+
+        // Check Inst 8: MOV A, 0 | Purpose: Verify that register A is loaded with the immediate value 0.
+        #2;
+        $display("CHECK @ t=%0t: After MOV A, 0 -> regA = %d", $time, regA_out);
+        if (regA_out !== 8'd0) begin
+            $error("FAIL [Part 3]: regA expected 0, got %d", regA_out);
+            mem_sequence_test_failed = 1'b1;
+        end
+
+        // Check Inst 9: MOV A, (50) | Purpose: Verify that register A reads the overwritten value (255) from DM[50].
+        #2;
+        $display("CHECK @ t=%0t: After MOV A, (50) [Read Overwritten Value] -> regA = %d", $time, regA_out);
+        if (regA_out !== 8'd255) begin
+            $error("FAIL [Part 3]: Read of overwritten DM[50] expected 255, got %d", regA_out);
+            mem_sequence_test_failed = 1'b1;
+        end
+
+        // --- Final Summary for this Test Block ---
+        if (!mem_sequence_test_failed) begin
+            $display(">>>>> ALL MEMORY SEQUENCE TESTS PASSED! <<<<< ");
+        end else begin
+            $display(">>>>> MEMORY SEQUENCE TEST FAILED! <<<<< ");
+        end
+
+        // --- Test: ADD A, (Dir) ---
+        $display("\n----- STARTING TEST: ADD A, (Dir) -----");
+
+        // Check Inst 10: MOV A, 100 | Purpose: Verify that register A is loaded with the operand 100.
+        #2;
+        $display("CHECK @ t=%0t: After MOV A, 100 -> regA = %d", $time, regA_out);
+        if (regA_out !== 8'd100) begin
+            $error("FAIL [ADD A, Dir]: regA expected 100, got %d", regA_out);
+            add_a_dir_test_failed = 1'b1;
+        end
+
+        // Check Inst 11: MOV B, 50 | Purpose: Verify that register B is loaded with the operand 50.
+        #2;
+        $display("CHECK @ t=%0t: After MOV B, 50 -> regB = %d", $time, regB_out);
+        if (regB_out !== 8'd50) begin
+            $error("FAIL [ADD A, Dir]: regB expected 50, got %d", regB_out);
+            add_a_dir_test_failed = 1'b1;
+        end
+
+        // Check Inst 12: MOV (120), B | Purpose: Verify that the value from register B (50) is stored in DM[120].
+        #2;
+        $display("CHECK @ t=%0t: After MOV (120), B -> DM[120] = %d", $time, Comp.DM.mem[120]);
+        if (Comp.DM.mem[120] !== 8'd50) begin
+            $error("FAIL [ADD A, Dir]: DM[120] expected 50, got %d", Comp.DM.mem[120]);
+            add_a_dir_test_failed = 1'b1;
+        end
+
+        // Check Inst 13: ADD A, (120) | Purpose: Verify that regA = regA + DM[120] (100 + 50 = 150).
+        #2;
+        $display("CHECK @ t=%0t: After ADD A, (120) -> regA = %d", $time, regA_out);
+        if (regA_out !== 8'd150) begin
+            $error("FAIL [ADD A, Dir]: regA expected 150, got %d", regA_out);
+            add_a_dir_test_failed = 1'b1;
+        end
+
+        // --- Final Summary for this Test Block ---
+        if (!add_a_dir_test_failed) begin
+            $display(">>>>> ADD A, (Dir) TEST PASSED! <<<<< ");
+        end else begin
+            $display(">>>>> ADD A, (Dir) TEST FAILED! <<<<< ");
+        end
+
+        // --- Test: JEQ (IF/ELSE) - Case 1: A == B ---
+        $display("\n----- STARTING TEST: JEQ - Case 1 (A == B) -----");
+        #16; // Wait for the entire 8-instruction program to complete.
+
+        // Check Program Result (Inst 14-21): JEQ Logic | Purpose: Verify DM[100] is 1, confirming the conditional jump was correctly taken.
+        $display("CHECK @ t=%0t: After IF/ELSE program (A==B) -> DM[100] = %d", $time, Comp.DM.mem[100]);
+        if (Comp.DM.mem[100] !== 8'd1) begin
+            $error("FAIL [JEQ Case 1]: DM[100] expected 1, got %d. The jump was likely not taken.", Comp.DM.mem[100]);
+            jeq_test_1_failed = 1'b1;
+        end
+
+        // --- Final Summary for this Test Block ---
+        if (!jeq_test_1_failed) begin
+            $display(">>>>> JEQ (A == B) TEST PASSED! <<<<< ");
+        end else begin
+            $display(">>>>> JEQ (A == B) TEST FAILED! <<<<< ");
+        end
+
+        #2;
+        $finish;
+    end
+
+    // Clock Generator
+    always #1 clk = ~clk;
+
 endmodule

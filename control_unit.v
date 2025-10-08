@@ -337,7 +337,6 @@ module control_unit(
         s_r  = 3'b011;  // OR (pasa Mem[Dir])
       end
 
-      
       7'b0100110: begin // MOV B,(Dir) (B=Mem[Lit])
         sd_r = 0;       // Dir=Lit
         lb_r = 1;
@@ -345,7 +344,6 @@ module control_unit(
         sb_r = 2'b01;   // Mem[Dir]
         s_r  = 3'b011;  // OR (pasa Mem[Dir])
       end
-
 
       7'b0100111: begin // MOV (Dir),A (Mem[Lit]=A)
         d_w_r = 1;      // data Write enabled
@@ -355,36 +353,36 @@ module control_unit(
         s_r   = 3'b011; // OR (pasa A)
       end
 
-      7'b0101000: begin// MOV (Dir),B
+      7'b0101000: begin // MOV (Dir),B
         d_w_r = 1; 
         sd_r = 0;       // Dir=Lit
         sa_r = 2'b11;   // 0
-        sb_r = 2'b00;  // B
-        s_r = 3'b011;  // OR (pasa B)
+        sb_r = 2'b00;   // B
+        s_r  = 3'b011;  // OR (pasa B)
       end
 
-      7'b0101001: begin// MOV A,(B)
-        sd_r =1 ;      // Dir=B
+      7'b0101001: begin // MOV A,(B)
+        sd_r = 1;       // Dir=B
         la_r = 1;
         sa_r = 2'b11;   // 0
         sb_r = 2'b01;   // Mem[Dir]
         s_r  = 3'b011;  // OR (pasa Mem[Dir])
       end
 
-      7'b0101010: begin// MOV B,(B)
-        sd_r =1 ;      // Dir=B
+      7'b0101010: begin // MOV B,(B)
+        sd_r = 1;       // Dir=B
         lb_r = 1;
         sa_r = 2'b11;   // 0
         sb_r = 2'b01;   // Mem[Dir]
         s_r  = 3'b011;  // OR (pasa Mem[Dir])
       end
 
-      7'b0101011: begin// MOV (B),A
+      7'b0101011: begin // MOV (B),A
         d_w_r = 1; 
-        sd_r = 1;      // Dir=B
-        sa_r = 2'b00;  // A
-        sb_r = 2'b11;  // 0
-        s_r = 3'b011;  // OR (pasa A)
+        sd_r = 1;       // Dir=B
+        sa_r = 2'b00;   // A
+        sb_r = 2'b11;   // 0
+        s_r = 3'b011;   // OR (pasa A)
       end
 
 
@@ -415,10 +413,10 @@ module control_unit(
 
       7'b0101111: begin // ADD(dir) (Mem[Lit]=A+B)
         d_w_r = 1; 
-        sd_r = 0;       // Dir=Lit
-        sa_r = 2'b00;   // A
-        sb_r = 2'b00;   // B
-        s_r  = 3'b000;  // ADD
+        sd_r  = 0;      // Dir=Lit
+        sa_r  = 2'b00;  // A
+        sb_r  = 2'b00;  // B
+        s_r   = 3'b000; // ADD
       end
 
       /* ========== SUB (DIR) ========== */
@@ -454,22 +452,22 @@ module control_unit(
         s_r  = 3'b001;  // SUB
       end
 
-            /* ========== AND (DIR)3'b010 ========== */
-      7'b0110100: begin // (A = A  AND Mem[Lit])
-        sd_r = 0; // lit
+      /* ========== AND (DIR)3'b010 ========== */
+      7'b0110100: begin // (A = A AND Mem[Lit])
+        sd_r = 0;       // lit
         la_r = 1;
         sa_r = 2'b00;
         sb_r = 2'b01;
-        s_r = 3'b010;
+        s_r  = 3'b010;
       end
   
       7'b0110101: begin //(B = B and Mem[Lit])
-        sd_r = 0; // lit
-        la_r = 0; // 0 en a
-        lb_r = 1; // 1 en b
-        sa_r = 2'b01; // b en sa
-        sb_r = 2'b01; // mem en sb
-        s_r = 3'b010;
+        sd_r = 0;       // lit
+        la_r = 0;       // 0 en a
+        lb_r = 1;       // 1 en b
+        sa_r = 2'b01;   // b en sa
+        sb_r = 2'b01;   // mem en sb
+        s_r  = 3'b010;
       end
       
       7'b0110110: begin 
@@ -478,7 +476,7 @@ module control_unit(
         lb_r = 0;
         sa_r = 2'b00;
         sb_r = 2'b01;
-        s_r = 3'b010;
+        s_r  = 3'b010;
       end
       
       7'b0110111: begin 
@@ -488,10 +486,47 @@ module control_unit(
         lb_r = 0;
         sa_r = 2'b00;
         sb_r = 2'b00;
-        s_r = 3'b010;
+        s_r  = 3'b010;
       end
 
       /* ========== OR (DIR) ========== */
+
+      // OR A,(Dir) 0111000  -> A = A | Mem[Lit]
+      7'b0111000: begin
+        d_w_r = 0;
+        sd_r  = 0;            // address = k8
+        la_r  = 1;            // escribir A
+        sa_r  = 2'b00;        // regA
+        sb_r  = 2'b01;        // Mem[address]
+        s_r   = 3'b011;       // OR
+      end
+
+      // OR B,(Dir) 0111001  -> B = B | Mem[Lit]
+      7'b0111001: begin
+        sd_r = 0;            // address = k8
+        lb_r = 1;
+        sa_r = 2'b01;        // B
+        sb_r = 2'b01;        // Mem[address]
+        s_r  = 3'b011;
+      end
+
+      // OR A,(B) 0111010    -> A = A | Mem[B]
+      7'b0111010: begin
+        sd_r = 1;            // address = B
+        la_r = 1;
+        sa_r = 2'b00;        // A
+        sb_r = 2'b01;        // Mem[addr]
+        s_r  = 3'b011;
+      end
+
+      // OR (Dir) 0111011    -> Mem[Lit] = A | B
+      7'b0111011: begin
+        d_w_r = 1;           // escribir en Mem[Lit]
+        sd_r  = 0;           // addr = k8
+        sa_r  = 2'b00;       // A
+        sb_r  = 2'b00;       // B
+        s_r   = 3'b011;      // OR (dato que se escribe = ALU)
+      end
 
       /* ========== NOT (DIR)3'b100 ========== */
       7'b0111100: begin 
@@ -501,7 +536,7 @@ module control_unit(
         lb_r = 0;
         sa_r = 2'b00;
         sb_r = 2'b11;
-        s_r = 3'b100;
+        s_r  = 3'b100;
       end
 
       7'b0111101: begin 
@@ -511,7 +546,7 @@ module control_unit(
         lb_r = 0;
         sa_r = 2'b01;
         sb_r = 2'b11;
-        s_r = 3'b100;
+        s_r  = 3'b100;
       end
 
       7'b0111110: begin 
@@ -521,11 +556,47 @@ module control_unit(
         lb_r = 0;
         sa_r = 2'b00;
         sb_r = 2'b11;
-        s_r = 3'b100;
+        s_r  = 3'b100;
       end
       
 
       /* ========== XOR (DIR) ========== */
+      
+      // XOR A,(Dir) 0111111 -> A = A ^ Mem[Lit]
+      7'b0111111: begin
+        sd_r = 0;                // addr = k8
+        la_r = 1;
+        sa_r = 2'b00;            // A
+        sb_r = 2'b01;            // Mem[addr]
+        s_r  = 3'b101;           // XOR
+      end
+
+      // XOR B,(Dir) 1000000 -> B = B ^ Mem[Lit]
+      7'b1000000: begin
+        sd_r = 0;
+        lb_r = 1;
+        sa_r = 2'b01;            // B (entra por A de la ALU)
+        sb_r = 2'b01;            // Mem[addr]
+        s_r  = 3'b101;
+      end
+
+      // XOR A,(B) 1000001 -> A = A ^ Mem[B]
+      7'b1000001: begin
+        sd_r = 1;                // addr = B
+        la_r = 1;
+        sa_r = 2'b00;            // A
+        sb_r = 2'b01;            // Mem[addr]
+        s_r  = 3'b101;
+      end
+
+      // XOR (Dir) 1000010 -> Mem[Lit] = A ^ B
+      7'b1000010: begin
+        d_w_r = 1;
+        sd_r  = 0;
+        sa_r  = 2'b00;           // A
+        sb_r  = 2'b00;           // B
+        s_r   = 3'b101;          // XOR (dato = ALU)
+      end
 
       /* ========== SHL (DIR)3'b110 ========== */
       7'b1000011: begin 
@@ -559,6 +630,30 @@ module control_unit(
       end
       /* ========== SHR (DIR) ========== */
 
+      // SHR (Dir),A 1000110 -> Mem[Lit] = A >> 1
+      7'b1000110: begin
+        d_w_r = 1;
+        sd_r  = 0;                // addr = k8
+        sa_r  = 2'b00;           // regA
+        s_r   = 3'b111;          // SHR
+      end
+
+      // SHR (Dir),B 1000111 -> Mem[Lit] = B >> 1
+      7'b1000111: begin
+        d_w_r = 1;
+        sd_r  = 0;
+        sa_r  = 2'b01;           // regB
+        s_r   = 3'b111;
+      end
+
+      // SHR (B) 1001000 -> Mem[B] = A >> 1
+      7'b1001000: begin
+        d_w_r = 1;
+        sd_r  = 1;               // addr = B
+        sa_r  = 2'b00;           // regA
+        s_r   = 3'b111;
+      end
+
       /* ========== INC (DIR) ========== */
       7'b1001001: begin 
         d_w_r = 1;
@@ -581,6 +676,24 @@ module control_unit(
       end
 
       /* ========== RST (DIR) ========== */
+
+      // RST (Dir) 1001011 -> Mem[Lit] = 0
+      7'b1001011: begin
+        d_w_r = 1;
+        sd_r  = 0;               // addr = k8
+        sa_r  = 2'b11;           // 0
+        sb_r  = 2'b11;           // 0
+        s_r   = 3'b010;          // AND => 0
+      end
+
+      // RST (B) 1001100 -> Mem[B] = 0
+      7'b1001100: begin
+        d_w_r = 1;
+        sd_r  = 1;               // addr = B
+        sa_r  = 2'b11;           // 0
+        sb_r  = 2'b11;           // 0
+        s_r   = 3'b010;          // AND => 0
+      end
 
 
     /* ===========================================================
@@ -624,6 +737,30 @@ module control_unit(
         sb_r = 2'b01;
         s_r = 3'b001;
       end
+
+      // CMP B,(Dir) 1010001  -> Flags = B - Mem[Lit]
+      7'b1010001: begin
+        l_pc_r = 0;
+        d_w_r  = 0;           // no write
+        sd_r   = 0;           // addr = k8 (Dir)
+        la_r   = 0;
+        lb_r   = 0;
+        sa_r   = 2'b01;       // regB
+        sb_r   = 2'b01;       // Mem[addr]
+        s_r    = 3'b001;      // SUB (actualiza Z,N,C,V)
+      end
+
+      // CMP A,(B) 1010010   -> Flags = A - Mem[B]
+      7'b1010010: begin
+        l_pc_r = 0;
+        d_w_r  = 0;
+        sd_r   = 1;           // addr = B
+        la_r   = 0;
+        lb_r   = 0;
+        sa_r   = 2'b00;       // regA
+        sb_r   = 2'b01;       // Mem[addr]
+        s_r    = 3'b001;      // SUB
+      end
       
 
 
@@ -663,7 +800,6 @@ module control_unit(
           sb_r = 2'b10;   // k8
           s_r  = 3'b011;  // OR (pasa k8)
         end
-        
       end
 
       /* ========== JLT ========== */
@@ -685,7 +821,6 @@ module control_unit(
           s_r  = 3'b011;  // OR (pasa k8)
         end
       end
-
 
       /* ========== JLE ========== */
       7'b1011001: begin // JLE (PC=Lit) si Z=1 o N=1
