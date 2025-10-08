@@ -17,7 +17,7 @@ module mux4(e0, e1, e2, e3, sel, out);
   
   /* para MUX B:
     sel=00: out = regB
-    sel=01: out = unico out de Data Memory (por ahora 0 pq no lo piden en la primera entrega jejej)
+    sel=01: out = valor leido en la memoria de datos de 8 bits (out de Data Memory)
     sel=10: out = k8 (literal; los 8 LSBs salientes de Instruction Memory)
     sel=11: out = numero 0 en 8 bits
   */

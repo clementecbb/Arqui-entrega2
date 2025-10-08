@@ -1,22 +1,28 @@
 // computer.v
-module computer(clk, alu_out_bus);
+module computer(clk, alu_result_out_bus);
   input clk;
-  output [7:0] alu_out_bus;
+  output [7:0] alu_result_out_bus;
   
-  // Recominedo pasar todas estas señales para afuera para poder ser vistas en el waveform
+  // cables relacionados al modulo de status
+  wire [3:0] alu_flags_out_bus; // flags salientes de ALU
+  wire [3:0] status_out_bus;    // flags salientes de Status
+  
+  // Recomiendo pasar todas estas señales para afuera para poder ser vistas en el waveform
   wire [7:0]    pc_out_bus;
-  wire [7:0]    dm_out_bus = 8'b00000000;  // por ahora 0, ya que Data Memory no se necesita para la primera entrega
+  wire [7:0]    dm_out_bus;
   wire [14:0]   im_out_bus;
   
   wire [7:0]    regA_out_bus;
   wire [7:0]    regB_out_bus;
   wire [7:0]    muxA_out_bus;
   wire [7:0]    muxB_out_bus;
+  wire [7:0]    mux_data_out_bus;
   
   // señales de control output-eadas por el control unit
-  wire          LA_sig, LB_sig; // loads de 1 bit c/u, evidentemente
-  wire [1:0]    SB_sig, SA_sig;
-  wire [2:0]    alu_s_sig;
+  wire          L_PC_sig, D_W_sig, SD_sig; // load de PC, write enable a Data Memory, y selector de MUX data
+  wire          LA_sig, LB_sig;            // loads de A y B 
+  wire [1:0]    SB_sig, SA_sig;            // selectores de MUXs A y B
+  wire [2:0]    S_alu_sig;                 // selector de la ALU
 
   // cables adicionales de numeros 0 y 1 para MUXs de A y B
   wire [7:0]    const0 = 8'b00000000;
@@ -30,15 +36,21 @@ module computer(clk, alu_out_bus);
   /*======= CABLEADO DE MODULOS =======*/
   control_unit CU(
     .opcode(opcode),
+    .flags_status(status_out_bus),
+    .L_PC(L_PC_sig),
+    .D_W(D_W_sig),
+    .SD(SD_sig),
     .LA(LA_sig),
     .LB(LB_sig),
     .SA(SA_sig),
     .SB(SB_sig),
-    .alu_s(alu_s_sig)
+    .S_alu(S_alu_sig)
   );
 
   pc PC(
     .clk(clk),
+    .k8(k8),
+    .load(L_PC_sig),
     .pc(pc_out_bus)
   );
 
@@ -49,14 +61,14 @@ module computer(clk, alu_out_bus);
 
   register regA(
     .clk(clk), 
-    .data(alu_out_bus), 
+    .data(alu_result_out_bus), 
     .load(LA_sig), 
     .out(regA_out_bus)
   );
   
   register regB(
     .clk(clk), 
-    .data(alu_out_bus), 
+    .data(alu_result_out_bus), 
     .load(LB_sig), 
     .out(regB_out_bus)
   );
@@ -79,11 +91,33 @@ module computer(clk, alu_out_bus);
     .out(muxB_out_bus)
   );
 
+  mux2 mux_data(
+    .e0(k8),
+    .e1(regB_out_bus),
+    .s(SD_sig),
+    .out(mux_data_out_bus)
+  );
+
+  data_memory DM(
+    .clk(clk),
+    .data_in(alu_result_out_bus),
+    .address(mux_data_out_bus),
+    .w(D_W_sig),
+    .data_out(dm_out_bus)
+  );
+
   alu ALU(
     .a(muxA_out_bus),
     .b(muxB_out_bus),
-    .s(alu_s_sig),
-    .out(alu_out_bus)
+    .s(S_alu_sig),
+    .result_out(alu_result_out_bus),
+    .flags_out(alu_flags_out_bus)
+  );
+
+  status Status(
+    .clk(clk),
+    .flags_in(alu_flags_out_bus),
+    .flags_out(status_out_bus)
   );
 
 endmodule
