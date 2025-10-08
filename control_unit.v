@@ -454,19 +454,131 @@ module control_unit(
         s_r  = 3'b001;  // SUB
       end
 
-      /* ========== AND (DIR) ========== */
+            /* ========== AND (DIR)3'b010 ========== */
+      7'b0110100: begin // (A = A  AND Mem[Lit])
+        sd_r = 0; // lit
+        la_r = 1;
+        sa_r = 2'b00;
+        sb_r = 2'b01;
+        s_r = 3'b010;
+      end
+  
+      7'b0110101: begin //(B = B and Mem[Lit])
+        sd_r = 0; // lit
+        la_r = 0; // 0 en a
+        lb_r = 1; // 1 en b
+        sa_r = 2'b01; // b en sa
+        sb_r = 2'b01; // mem en sb
+        s_r = 3'b010;
+      end
+      
+      7'b0110110: begin 
+        sd_r = 1;
+        la_r = 1;
+        lb_r = 0;
+        sa_r = 2'b00;
+        sb_r = 2'b01;
+        s_r = 3'b010;
+      end
+      
+      7'b0110111: begin 
+        d_w_r = 1;
+        sd_r = 0;
+        la_r = 0;
+        lb_r = 0;
+        sa_r = 2'b00;
+        sb_r = 2'b00;
+        s_r = 3'b010;
+      end
 
       /* ========== OR (DIR) ========== */
 
-      /* ========== NOT (DIR) ========== */
+      /* ========== NOT (DIR)3'b100 ========== */
+      7'b0111100: begin 
+        d_w_r = 1;
+        sd_r = 0;
+        la_r = 0;
+        lb_r = 0;
+        sa_r = 2'b00;
+        sb_r = 2'b11;
+        s_r = 3'b100;
+      end
+
+      7'b0111101: begin 
+        d_w_r = 1;
+        sd_r = 0;
+        la_r = 0;
+        lb_r = 0;
+        sa_r = 2'b01;
+        sb_r = 2'b11;
+        s_r = 3'b100;
+      end
+
+      7'b0111110: begin 
+        d_w_r = 1;
+        sd_r = 1;
+        la_r = 0;
+        lb_r = 0;
+        sa_r = 2'b00;
+        sb_r = 2'b11;
+        s_r = 3'b100;
+      end
+      
 
       /* ========== XOR (DIR) ========== */
 
-      /* ========== SHL (DIR) ========== */
+      /* ========== SHL (DIR)3'b110 ========== */
+      7'b1000011: begin 
+        d_w_r = 1;
+        sd_r = 0;
+        la_r = 0;
+        lb_r = 0;
+        sa_r = 2'b00;
+        sb_r = 2'b11;
+        s_r = 3'b110;
+      end
 
+      7'b1000100: begin 
+        d_w_r = 1;
+        sd_r = 0;
+        la_r = 0;
+        lb_r = 0;
+        sa_r = 2'b01;
+        sb_r = 2'b11;
+        s_r = 3'b110;
+      end
+
+      7'b1000101: begin 
+        d_w_r = 1;
+        sd_r = 1;
+        la_r = 0;
+        lb_r = 0;
+        sa_r = 2'b00;
+        sb_r = 2'b11;
+        s_r = 3'b110;
+      end
       /* ========== SHR (DIR) ========== */
 
       /* ========== INC (DIR) ========== */
+      7'b1001001: begin 
+        d_w_r = 1;
+        sd_r = 0;
+        la_r = 0;
+        lb_r = 0;
+        sa_r = 2'b10;
+        sb_r = 2'b01;
+        s_r = 3'b000;
+      end
+
+      7'b1001010: begin 
+        d_w_r = 1;
+        sd_r = 1;
+        la_r = 0;
+        lb_r = 0;
+        sa_r = 2'b10;
+        sb_r = 2'b01;
+        s_r = 3'b000;
+      end
 
       /* ========== RST (DIR) ========== */
 
@@ -477,6 +589,41 @@ module control_unit(
     */
 
       /* ========== CMP ========== */
+      7'b1001101: begin 
+        sd_r = 0;
+        la_r = 0;
+        lb_r = 0;
+        sa_r = 2'b00;
+        sb_r = 2'b00;
+        s_r = 3'b001;
+      end
+
+      7'b1001110: begin 
+        sd_r = 0;
+        la_r = 0;
+        lb_r = 0;
+        sa_r = 2'b00;
+        sb_r = 2'b10;
+        s_r = 3'b001;
+      end
+
+      7'b1001111: begin 
+        sd_r = 0;
+        la_r = 0;
+        lb_r = 0;
+        sa_r = 2'b01;
+        sb_r = 2'b10;
+        s_r = 3'b001;
+      end
+
+      7'b1010000: begin 
+        sd_r = 0;
+        la_r = 0;
+        lb_r = 0;
+        sa_r = 2'b00;
+        sb_r = 2'b01;
+        s_r = 3'b001;
+      end
       
 
 
