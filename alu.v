@@ -24,6 +24,8 @@ module alu(a, b, s, result_out, flags_out);
     c = 0;
     v = 0;
 
+    result_with_carry = 9'b0; // linter de verilator se queja si no se inicializa
+
     // operaciones
     case (s)
       3'b000: begin // ADD
