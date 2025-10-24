@@ -10,7 +10,7 @@ module data_memory(clk, data_in, address, w, data_out);
   wire       w;
 
   // memoria 
-  reg  [7:0]   mem [0:255];
+  reg  [7:0]   mem [0:15];
 
   // asumimos que lectura es asincrona
   assign data_out = mem[address];
