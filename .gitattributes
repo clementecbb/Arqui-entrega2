@@ -1,0 +1,3 @@
+*.v linguist-vendored
+*.sv linguist-vendored
+verilog/** linguist-vendored
